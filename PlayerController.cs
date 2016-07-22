@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class PlayerController : MonoBehaviour {
@@ -15,7 +15,9 @@ public class PlayerController : MonoBehaviour {
     public Vector3 axis = Vector3.up;
     public Vector3 desiredPosition;
     public Vector3 flightVelocity;
-    public float radius = 1.9f;
+    public float radius = 1.56f;
+    public float outerradius = 1.56f;
+    public float innerradius = 1.12f;
     public float radiusSpeed = 1.0f;
     public float flightSpeed = 5.0f;
     public float rotationSpeed = 80.0f;
@@ -23,11 +25,12 @@ public class PlayerController : MonoBehaviour {
     public bool fired = false;
     [SerializeField]
     public Rigidbody rigid;
+    RaycastHit HitObject;
 
-   
 
-	// Use this for initialization
-	void Start () {
+
+    // Use this for initialization
+    void Start () {
         currentScale = transform.localScale.y;
         currentPosition = transform.position.y;
         velocity = new Vector3(0.0f, 0.0f, 0.0f);
@@ -35,11 +38,17 @@ public class PlayerController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+
+          
+
+
         if (Input.GetMouseButtonDown(0) && scaleflipped == true)
         {
             scaleflipped = false;
             if (inverseflippossible  == true)
             {
+               
+                
                 inverseflip = true;
             }
             if (flip == false && inverseflip == false)
@@ -49,21 +58,28 @@ public class PlayerController : MonoBehaviour {
             if (orbitflip == false)
             {
                 orbitflip = true;
-                radius = 1.42f;
+                transform.position = new Vector3(transform.position.x, transform.position.y, -0.5f);
+                radius = innerradius;
             }
             else
             {
                 orbitflip = false;
-                radius = 1.9f;
+                transform.position = new Vector3(transform.position.x, transform.position.y, 0.0f);
+                radius = outerradius;
             }
 
         }
         if (Input.GetMouseButtonDown(1) && inverseflippossible == false) // you can fly out
         {
+            transform.position = new Vector3(transform.position.x, transform.position.y, 0.0f);
             flightVelocity = (CurrentNeuron.position - transform.position).normalized * -flightSpeed;
+            flightVelocity.Set(flightVelocity.x, flightVelocity.y, 1.14f);
             rigid.velocity = (flightVelocity);
            camera.GetComponent<Rigidbody>().velocity = flightVelocity;
-            fired = true;
+           fired = true;
+            
+            Debug.DrawRay(transform.position, flightVelocity);
+            Debug.Log(Physics.Raycast(transform.position, flightVelocity, out HitObject));
         }
 
         if (fired == false)
@@ -106,3 +122,11 @@ public class PlayerController : MonoBehaviour {
         transform.position = Vector3.MoveTowards(transform.position, desiredPosition, Time.deltaTime * radiusSpeed);
     }
 }
+
+/*on collision
+calculate direction vector between player and neuron
+normalise it
+multiply by radius
+add the players radius
+players position = thisVector + neuron position
+*/
