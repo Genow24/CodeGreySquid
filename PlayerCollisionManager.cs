@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class PlayerCollisionManager : MonoBehaviour {
@@ -36,21 +36,14 @@ public class PlayerCollisionManager : MonoBehaviour {
             Vector3 tempVec = new Vector3(0.0f, 0.0f, 0.0f);
             Player.GetComponent<Rigidbody>().velocity = tempVec;
             Player.GetComponent<PlayerController>().camera.GetComponent<Rigidbody>().velocity = new Vector3(0.0f, 0.0f, 0.0f);
-            Player.transform.rotation = Quaternion.RotateTowards(Player.transform.rotation, newNeuron.rotation, 5.0f);
+
+
            //we need to set the cube back appropiately here
-            Vector3 centerOfSphere = newNeuron.transform.position;
+            Vector3 centerOfSphere = newNeuron.transform.position.normalized;
 
-            Vector3 placementPosition = Player.transform.position;
-
-            Vector3 normal = (placementPosition - centerOfSphere).normalized;
-
-            Quaternion rotation = Quaternion.LookRotation(normal);
+            Quaternion rotation = Quaternion.LookRotation(centerOfSphere);
             Player.transform.rotation = rotation;
             Player.transform.rotation = new Quaternion(0.0f, 0.0f, Player.transform.rotation.z, 1.0f);
-           
-            //Quaternion startQuat = transform.rotation;
-            //Vector3 startUp = transform.up;
-            //transform.rotation = Quaternion.FromToRotation(transform.up, newNeuron.normal) * transform.rotation;
         }
     }
 }
