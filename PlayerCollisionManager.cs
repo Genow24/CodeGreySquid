@@ -44,6 +44,8 @@ public class PlayerCollisionManager : MonoBehaviour {
             Quaternion rotation = Quaternion.LookRotation(centerOfSphere);
             Player.transform.rotation = rotation;
             Player.transform.rotation = new Quaternion(0.0f, 0.0f, Player.transform.rotation.z, 1.0f);
+
+            col.gameObject.GetComponent<Renderer>().material.color = Color.magenta;
         }
     }
 }
